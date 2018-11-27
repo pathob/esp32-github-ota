@@ -1,0 +1,38 @@
+sudo: false
+language: bash
+os:
+- linux
+addons:
+  apt:
+    packages:
+    - gperf
+    - python
+    - python-serial
+before_install:
+- IDF_TAG=v3.2-beta1-esp_http_client_patch
+- TOOLCHAIN=xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0
+install:
+- export INSTALL_PATH=/opt
+- export IDF_PATH=${INSTALL_PATH}/esp-idf
+- export PATH=$PATH:${INSTALL_PATH}/xtensa-esp32-elf/bin
+- wget -O ${INSTALL_PATH}/${TOOLCHAIN}.tar.gz https://dl.espressif.com/dl/${TOOLCHAIN}.tar.gz
+- tar -xzf ${INSTALL_PATH}/${TOOLCHAIN}.tar.gz -C ${INSTALL_PATH}
+- git clone --branch ${IDF_TAG} --recursive https://github.com/pathob/esp-idf.git
+  ${IDF_PATH}
+script:
+- python -m pip install --user -r ${IDF_PATH}/requirements.txt
+- make defconfig
+- make
+deploy:
+  provider: releases
+  api_key:
+    secure: jTdlHOfYsUUGWfuZ7H5HXGbyWn8tEQ+qEk/qQxF6heVNgtzyEb/M6pr+IO22qUhyJQrNaW1m6yXSLlwZxzxJ8Bxd6GDJu3b5tXQ0KWTmzCD1j7Jf8ITYJzMsNYM1w9npTx573jgIGo+zhU+KXuT1aMU+KXoylrLtTwn+RHIslTHJzIVL+4XJlC36Nsw48VGS7FsTqI3TZBCuXbvKPmPDeJ56ckH5uyy8B7CVYZKawZqkbd8RO7bOFMKzCQiguJqimxWNaqoOYSNG0HJw2WfPXunLDEKFT2SEN7gCRB7ceo7IJEx+1gYb3877MmMZ5Gve2eksyF16Rg2dcHd7SJkawiUg5Eb3xTzdN4UGsrth3xSj+OTwCp2DlomgHP5k3H1TYBBALzMeM5XtznaBFMT0d07eGY9gvVK6q6CHcv8WySpAyhIEdAElOHZnhNCF8M151aRFVQ+RkjkQXGNJDb8+ohtCbiNTyGQOZs9DJCACZOwJqVrCKNWq3EcDGyOrI0a22If3gr8DKiqI2oYRbzUKm9XX/opIId4kCpypEqf2KriQefR/5fQMYQxT0q7yJStM97t3PMH6hFpsgCc3Di3dzLOOXUyputPHZZvEBP8fpaZFifYfz0lqRMYBjbfk/dUf3N1sV/ftcvK+YqMwId1TsH7dqGr/KYWrK9ClXBHr6g0=
+  file_glob: true
+  file: build/*.bin
+  skip_cleanup: true
+  on:
+    tags: true
+notifications:
+  email:
+    on_success: change
+    on_failure: always

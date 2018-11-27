@@ -1,0 +1,3 @@
+[submodule "components/connectivity"]
+	path = components/connectivity
+	url = https://github.com/pathob/esp32-connectivity.git
