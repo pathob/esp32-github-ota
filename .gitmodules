@@ -1,3 +1,6 @@
 [submodule "components/connectivity"]
 	path = components/connectivity
 	url = https://github.com/pathob/esp32-connectivity.git
+[submodule ".vscode"]
+	path = .vscode
+	url = https://github.com/pathob/.vscode-esp32.git
